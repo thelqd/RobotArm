@@ -26,7 +26,7 @@ public class Game
         String sequence = "";
         if (moves.size() > 0) {
             for (IAction move: moves) {
-                sequence += move.getJson().toString() + "\n";
+                sequence += move.getAsString() + "\n";
             }
         }
         this.restClient.post("/sequence", sequence);

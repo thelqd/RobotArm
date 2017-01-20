@@ -6,9 +6,9 @@ public class Grab implements IAction
 {
     private boolean mode;
 
-    public Grab(boolean mdoe)
+    public Grab(boolean mode)
     {
-        this.mode = mdoe;
+        this.mode = mode;
     }
 
     public JSONObject getJson()
@@ -16,5 +16,10 @@ public class Grab implements IAction
         JSONObject json = new JSONObject();
         json.put("pumpOn", this.mode);
         return json;
+    }
+
+    @Override
+    public String getAsString() {
+        return "pumpOn " + Boolean.toString(mode) + " ";
     }
 }

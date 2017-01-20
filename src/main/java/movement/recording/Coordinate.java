@@ -41,6 +41,7 @@ public class Coordinate implements IAction
         this.z = z;
     }
 
+    @Override
     public JSONObject getJson()
     {
         JSONObject json = new JSONObject();
@@ -49,5 +50,10 @@ public class Coordinate implements IAction
         json.put("z", new Integer(this.getZ()));
 
         return json;
+    }
+
+    @Override
+    public String getAsString() {
+        return "move " + this.getX() + " " + this.getY() + " " + this.getZ() + " ";
     }
 }

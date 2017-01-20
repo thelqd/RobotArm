@@ -77,6 +77,16 @@ public class ArmController {
         return this.initFailed();
     }
 
+    @RequestMapping(value = "/erplay", method = RequestMethod.GET)
+    public Response replay()
+    {
+        if (this.isInitialized) {
+            this.game.replay();
+            return this.buildResponse("replay started");
+        }
+        return this.initFailed();
+    }
+
     private Response initFailed()
     {
         return this.buildResponse("Service not initialized. Call /init with a valid key");

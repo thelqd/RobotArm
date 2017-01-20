@@ -9,4 +9,10 @@ public interface IAction
      * @return JSONObject
      */
     JSONObject getJson();
+
+    /**
+     *
+     * @return
+     */
+    String getAsString();
 }

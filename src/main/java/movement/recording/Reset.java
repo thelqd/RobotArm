@@ -10,4 +10,9 @@ public class Reset implements IAction {
         json.put("reset", "");
         return json;
     }
+
+    @Override
+    public String getAsString() {
+        return "reset ";
+    }
 }
