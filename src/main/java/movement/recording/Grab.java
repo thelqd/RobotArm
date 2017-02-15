@@ -20,6 +20,8 @@ public class Grab implements IAction
 
     @Override
     public String getAsString() {
-        return "pumpOn " + Boolean.toString(mode) + " ";
+        String ret = "pumpOn " + Boolean.toString(mode) + " \n";
+        ret += "valueOn " + Boolean.toString(mode) + " ";
+        return ret;
     }
 }

@@ -27,8 +27,14 @@ public class Game
         if (moves.size() > 0) {
             for (IAction move: moves) {
                 sequence += move.getAsString() + "\n";
+                System.out.println(move.getAsString());
             }
         }
         this.restClient.post("/sequence", sequence);
+    }
+
+    public boolean hasActions()
+    {
+        return this.moves.size() > 1;
     }
 }

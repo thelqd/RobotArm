@@ -12,33 +12,67 @@ public class ArmController {
 
     private boolean isInitialized = false;
 
+    private boolean isRunning = false;
+
     private Control control;
 
     private RestClient restClient;
 
     private Game game;
 
+    private Game lastGame;
+
+    private Coordinate currentCoordinate;
+
     @RequestMapping(value = "/init", method = RequestMethod.GET)
     public Response init(@RequestParam(value="key") String key)
     {
         this.restClient = new RestClient(key);
         this.control = new Control(restClient);
-        this.game = new Game(restClient);
         this.isInitialized = true;
-        this.game.add(new Reset());
         return new Response("Connection initialized");
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.GET)
     public Response move(
-            @RequestParam(value = "x") int x,
-            @RequestParam(value = "y") int y,
-            @RequestParam(value = "z") int z)
+            @RequestParam(value = "direction") String direction,
+            @RequestParam(value = "length", required = false) Integer length
+    )
     {
         if (this.isInitialized) {
-            Coordinate coordinate = new Coordinate(x, y, z);
-            this.control.move(coordinate);
-            this.game.add(coordinate);
+            if (!this.isRunning) {
+                this.startArm();
+            }
+            if(length == null) {
+                length = 10;
+            }
+            if (direction.equals("f")) {
+                this.currentCoordinate.setX(
+                        this.currentCoordinate.getX() + length
+                );
+            } else if (direction.equals("b")) {
+                this.currentCoordinate.setX(
+                        this.currentCoordinate.getX() - length
+                );
+            } else if (direction.equals("l")) {
+                this.currentCoordinate.setY(
+                        this.currentCoordinate.getY() + length
+                );
+            } else if (direction.equals("r")) {
+                this.currentCoordinate.setY(
+                        this.currentCoordinate.getY() - length
+                );
+            } else if (direction.equals("u")) {
+                this.currentCoordinate.setZ(
+                        this.currentCoordinate.getZ() + length
+                );
+            } else if (direction.equals("d")) {
+                this.currentCoordinate.setZ(
+                        this.currentCoordinate.getZ() - length
+                );
+            }
+            this.control.move(this.currentCoordinate);
+            this.game.add(this.currentCoordinate);
             return this.buildResponse("arm moved");
         }
         return this.initFailed();
@@ -48,6 +82,9 @@ public class ArmController {
     public Response grab()
     {
         if (this.isInitialized) {
+            if (!this.isRunning) {
+                this.startArm();
+            }
             this.control.grab();
             this.game.add(new Grab(true));
             return this.buildResponse("arm grabbing");
@@ -59,6 +96,9 @@ public class ArmController {
     public Response release()
     {
         if (this.isInitialized) {
+            if (!this.isRunning) {
+                this.startArm();
+            }
             this.control.release();
             this.game.add(new Grab(false));
             return this.buildResponse("arm released");
@@ -70,6 +110,9 @@ public class ArmController {
     public Response reset()
     {
         if (this.isInitialized) {
+            if (!this.isRunning) {
+                this.startArm();
+            }
             this.control.reset();
             this.game.add(new Reset());
             return this.buildResponse("arm reseted");
@@ -77,16 +120,48 @@ public class ArmController {
         return this.initFailed();
     }
 
-    @RequestMapping(value = "/erplay", method = RequestMethod.GET)
+    @RequestMapping(value = "/replay", method = RequestMethod.GET)
     public Response replay()
     {
         if (this.isInitialized) {
-            this.game.replay();
-            return this.buildResponse("replay started");
+            if (this.lastGame.hasActions()) {
+                this.lastGame.replay();
+                return this.buildResponse("replay started");
+            } else {
+                return this.buildResponse("No actions in game");
+            }
         }
         return this.initFailed();
     }
 
+    @RequestMapping(value = "/start", method = RequestMethod.GET)
+    public Response start()
+    {
+        if (this.isInitialized) {
+            this.startArm();
+        }
+        return this.initFailed();
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.GET)
+    public Response save()
+    {
+        if (this.isInitialized) {
+            this.lastGame = this.game;
+            this.isRunning = false;
+            return this.buildResponse("sequence saved");
+        }
+        return this.initFailed();
+    }
+
+    private void startArm()
+    {
+        this.isRunning = true;
+        this.game = new Game(restClient);
+        this.control.reset();
+        this.currentCoordinate = this.control.getPosition();
+        this.game.add(new Reset());
+    }
     private Response initFailed()
     {
         return this.buildResponse("Service not initialized. Call /init with a valid key");

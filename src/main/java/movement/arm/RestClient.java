@@ -22,7 +22,8 @@ public class RestClient {
         this.headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "*/*");
-        headers.add("Autthorization", "Bearer " + key);
+        headers.add("Authorization", "Bearer " + key);
+        System.out.println(headers.toString());
     }
 
     public String get(String uri) {
