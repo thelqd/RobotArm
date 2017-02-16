@@ -1,18 +1,18 @@
 package movement.recording;
 
-import movement.arm.RestClient;
+import movement.arm.Control;
 
 import java.util.ArrayList;
 
-public class Game
+public class Sequence
 {
-    private RestClient restClient;
+    private Control control;
 
     private ArrayList<IAction> moves;
 
-    public Game(RestClient restClient)
+    public Sequence(Control control)
     {
-        this.restClient = restClient;
+        this.control = control;
         this.moves = new ArrayList<>();
     }
 
@@ -30,7 +30,7 @@ public class Game
                 System.out.println(move.getAsString());
             }
         }
-        this.restClient.post("/sequence", sequence);
+        this.control.sequence(sequence);
     }
 
     public boolean hasActions()

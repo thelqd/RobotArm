@@ -18,9 +18,9 @@ public class ArmController {
 
     private RestClient restClient;
 
-    private Game game;
+    private Sequence sequence;
 
-    private Game lastGame;
+    private Sequence lastSequence;
 
     private Coordinate currentCoordinate;
 
@@ -72,7 +72,7 @@ public class ArmController {
                 );
             }
             this.control.move(this.currentCoordinate);
-            this.game.add(this.currentCoordinate);
+            this.sequence.add(this.currentCoordinate);
             return this.buildResponse("arm moved");
         }
         return this.initFailed();
@@ -86,7 +86,7 @@ public class ArmController {
                 this.startArm();
             }
             this.control.grab();
-            this.game.add(new Grab(true));
+            this.sequence.add(new Grab(true));
             return this.buildResponse("arm grabbing");
         }
         return this.initFailed();
@@ -100,7 +100,7 @@ public class ArmController {
                 this.startArm();
             }
             this.control.release();
-            this.game.add(new Grab(false));
+            this.sequence.add(new Grab(false));
             return this.buildResponse("arm released");
         }
         return this.initFailed();
@@ -114,7 +114,7 @@ public class ArmController {
                 this.startArm();
             }
             this.control.reset();
-            this.game.add(new Reset());
+            this.sequence.add(new Reset());
             return this.buildResponse("arm reseted");
         }
         return this.initFailed();
@@ -124,11 +124,11 @@ public class ArmController {
     public Response replay()
     {
         if (this.isInitialized) {
-            if (this.lastGame.hasActions()) {
-                this.lastGame.replay();
+            if (this.lastSequence.hasActions()) {
+                this.lastSequence.replay();
                 return this.buildResponse("replay started");
             } else {
-                return this.buildResponse("No actions in game");
+                return this.buildResponse("No actions in sequence");
             }
         }
         return this.initFailed();
@@ -147,7 +147,7 @@ public class ArmController {
     public Response save()
     {
         if (this.isInitialized) {
-            this.lastGame = this.game;
+            this.lastSequence = this.sequence;
             this.isRunning = false;
             return this.buildResponse("sequence saved");
         }
@@ -157,10 +157,10 @@ public class ArmController {
     private void startArm()
     {
         this.isRunning = true;
-        this.game = new Game(restClient);
+        this.sequence = new Sequence(this.control);
         this.control.reset();
         this.currentCoordinate = this.control.getPosition();
-        this.game.add(new Reset());
+        this.sequence.add(new Reset());
     }
     private Response initFailed()
     {
