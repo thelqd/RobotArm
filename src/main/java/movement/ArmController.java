@@ -46,33 +46,39 @@ public class ArmController {
             if(length == null) {
                 length = 10;
             }
+            Coordinate currentCoord = new Coordinate(
+                    this.currentCoordinate.getX(),
+                    this.currentCoordinate.getY(),
+                    this.currentCoordinate.getZ()
+            );
             if (direction.equals("f")) {
-                this.currentCoordinate.setX(
-                        this.currentCoordinate.getX() + length
+                currentCoord.setX(
+                        currentCoord.getX() + length
                 );
             } else if (direction.equals("b")) {
-                this.currentCoordinate.setX(
-                        this.currentCoordinate.getX() - length
+                currentCoord.setX(
+                        currentCoord.getX() - length
                 );
             } else if (direction.equals("l")) {
-                this.currentCoordinate.setY(
-                        this.currentCoordinate.getY() + length
+                currentCoord.setY(
+                        currentCoord.getY() - length
                 );
             } else if (direction.equals("r")) {
-                this.currentCoordinate.setY(
-                        this.currentCoordinate.getY() - length
+                currentCoord.setY(
+                        currentCoord.getY() + length
                 );
             } else if (direction.equals("u")) {
-                this.currentCoordinate.setZ(
-                        this.currentCoordinate.getZ() + length
+                currentCoord.setZ(
+                        currentCoord.getZ() + length
                 );
             } else if (direction.equals("d")) {
-                this.currentCoordinate.setZ(
-                        this.currentCoordinate.getZ() - length
+                currentCoord.setZ(
+                        currentCoord.getZ() - length
                 );
             }
-            this.control.move(this.currentCoordinate);
-            this.sequence.add(this.currentCoordinate);
+            this.control.move(currentCoord);
+            this.sequence.add(currentCoord);
+            this.currentCoordinate = currentCoord;
             return this.buildResponse("arm moved");
         }
         return this.initFailed();
@@ -160,7 +166,7 @@ public class ArmController {
         this.sequence = new Sequence(this.control);
         this.control.reset();
         this.currentCoordinate = this.control.getPosition();
-        this.sequence.add(new Reset());
+        //this.sequence.add(new Reset());
     }
     private Response initFailed()
     {

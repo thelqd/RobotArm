@@ -25,7 +25,6 @@ public class Control
     public HttpStatus reset()
     {
         this.response = this.restClient.post("/reset", "");
-        System.out.println(this.response);
         return this.restClient.getStatus();
     }
 
@@ -44,7 +43,6 @@ public class Control
     public HttpStatus sequence(String seq)
     {
         this.response = this.restClient.post("/sequence", seq);
-        System.out.println(this.response);
         return this.restClient.getStatus();
     }
 
@@ -54,12 +52,12 @@ public class Control
             String json = this.restClient.get("/positionXYZ");
             JSONObject cords = (JSONObject) new JSONParser().parse(json);
             return new Coordinate(
-                    (int)cords.get("x"),
-                    (int)cords.get("y"),
-                    (int)cords.get("z")
+                    Integer.parseInt(cords.get("x").toString()),
+                    Integer.parseInt(cords.get("y").toString()),
+                    Integer.parseInt(cords.get("z").toString())
             );
         } catch (Exception e) {
-            return new Coordinate(200, 200, 50);
+            return new Coordinate(200, 0, 200);
         }
     }
 }

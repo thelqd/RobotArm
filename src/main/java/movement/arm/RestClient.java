@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class RestClient {
 
-    private String server = "http://austria.omilab.org/omirob/dobot1/rest";
+    private String server = "http://austria.omilab.org/omirob/dobot2/rest";
 
     private RestTemplate rest;
 
@@ -23,7 +23,6 @@ public class RestClient {
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "*/*");
         headers.add("Authorization", "Bearer " + key);
-        System.out.println(headers.toString());
     }
 
     public String get(String uri) {

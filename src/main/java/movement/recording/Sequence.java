@@ -26,8 +26,9 @@ public class Sequence
         String sequence = "";
         if (moves.size() > 0) {
             for (IAction move: moves) {
-                sequence += move.getAsString() + "\n";
-                System.out.println(move.getAsString());
+                if(move != null) {
+                    sequence += move.getAsString() + "\\n";
+                }
             }
         }
         this.control.sequence(sequence);
